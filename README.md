@@ -1,4 +1,4 @@
-# vxBot
+# vxTwitterBot
 
 A Discord bot that replaces messages that contain `https://twitter.com` URLs with `https://vxtwitter.com` (https://github.com/dylanpdx/BetterTwitFix).
 
