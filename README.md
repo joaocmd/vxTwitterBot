@@ -16,7 +16,7 @@ The config file is structured as follows:
 ```
 
 Necessary bot permissions:
-* Read Messages/View Channels
+* Read Messages/View Channels (Requires message content intent)
 * Send Messages
 * Manage Messages
 * Embed Links
