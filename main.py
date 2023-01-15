@@ -26,7 +26,7 @@ def check_video_twitter_api(tweet_ids: List[str]):
     for tweet_id in tweet_ids:
         tweet = twitter_api.get_tweet(tweet_id, expansions=["attachments.media_keys"], media_fields=["type"])
         if (tweet.includes and tweet.includes.media and
-            any(medium.type == 'video' for medium in tweet.includes.media)):
+            any(medium.type in ['video', 'animated_gif'] for medium in tweet.includes.media)):
                 return True
     return False
 
