@@ -1,3 +1,4 @@
+from typing import List
 import datetime
 import discord
 import json
@@ -21,12 +22,21 @@ bot = discord.Client(intents=intents)
 
 twitter_api = pytwitter.Api(bearer_token=TWITTER_BEARER_TOKEN)
 
-def check_video_twitter_api(tweet_ids: list[str]):
-    for tweet_id in tweet_ids:
-        tweet = twitter_api.get_tweet(tweet_id, expansions=["attachments.media_keys"], media_fields=["type"])
-        if (tweet.includes and tweet.includes.media and
-            any(medium.type in ['video', 'animated_gif'] for medium in tweet.includes.media)):
+def check_video_twitter_api(tweet_ids: List[str], depth=0):
+    tweets = twitter_api.get_tweets(
+            tweet_ids[0],
+            expansions=["attachments.media_keys", "referenced_tweets.id"],
+            media_fields=["type"]
+        )
+
+    if depth == 0 and tweets.includes.tweets: # only check first quote retweet
+        if any(check_video_twitter_api([referenced_tweet.id], depth=1) for referenced_tweet in tweets.includes.tweets):
                 return True
+
+    if (tweets.includes and tweets.includes.media and
+        any(medium.type in ['video', 'animated_gif'] for medium in tweets.includes.media)):
+            return True
+
     return False
 
 def check_video_no_twitter(message: discord.Message):
