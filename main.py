@@ -39,7 +39,7 @@ def check_video_twitter_api(tweet_ids: List[str], depth=0):
 
     return False
 
-def check_video_no_twitter(message: discord.Message):
+def check_video_discord_embed(message: discord.Message):
     return (MATCH in message.content and
             message.embeds and any(embed.video and embed.video.url for embed in message.embeds))
 
@@ -56,7 +56,7 @@ async def on_message(message: discord.Message):
     if TWITTER_BEARER_TOKEN:
         has_video = check_video_twitter_api(tweet_ids)
     else:
-        has_video = check_video_no_twitter(message)
+        has_video = check_video_discord_embed(message)
 
     print(datetime.datetime.now(), message.author, message.content)
     if has_video:
