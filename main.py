@@ -1,3 +1,4 @@
+from typing import List
 import datetime
 import discord
 import json
@@ -21,10 +22,13 @@ bot = discord.Client(intents=intents)
 
 twitter_api = pytwitter.Api(bearer_token=TWITTER_BEARER_TOKEN)
 
-def check_video_twitter_api(tweet_id: str):
-    tweet = twitter_api.get_tweet(tweet_id, expansions=["attachments.media_keys"], media_fields=["type"])
-    return (tweet.includes and tweet.includes.media and
-            any(medium.type == 'video' for medium in tweet.includes.media))
+def check_video_twitter_api(tweet_ids: List[str]):
+    for tweet_id in tweet_ids:
+        tweet = twitter_api.get_tweet(tweet_id, expansions=["attachments.media_keys"], media_fields=["type"])
+        if (tweet.includes and tweet.includes.media and
+            any(medium.type == 'video' for medium in tweet.includes.media)):
+                return True
+    return False
 
 def check_video_no_twitter(message: discord.Message):
     return (MATCH in message.content and
@@ -36,13 +40,12 @@ async def on_message(message: discord.Message):
         return
 
     # Only need to match once, message.content.replace replaces all
-    match = re.search('https://twitter.com/[a-zA-Z0-9_]*/status/([0-9]+)', message.content)
-    if not match:
+    tweet_ids = re.findall('https://twitter.com/[a-zA-Z0-9_]*/status/([0-9]+)', message.content)
+    if not tweet_ids:
         return
 
-    tweet_id = match.group(1)
     if TWITTER_BEARER_TOKEN:
-        has_video = check_video_twitter_api(tweet_id)
+        has_video = check_video_twitter_api(tweet_ids)
     else:
         has_video = check_video_no_twitter(message)
 
