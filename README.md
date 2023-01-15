@@ -22,6 +22,8 @@ The `TWITTER_BEARER_TOKEN` field can be left with an empty string.
 In that case, the bot uses the message embed to check if it contains a video.
 This method does not always work because the embed might not load or might be loaded only after `on_message` is called.
 
+If `TAG` is false, the `@mention` text still appears but the message author is not tagged.
+
 ## Necessary bot permissions
 
 The following permissions are necessary to run the bot:
