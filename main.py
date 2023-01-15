@@ -35,7 +35,8 @@ async def on_message(message: discord.Message):
     if message.author.id == bot.user.id:
         return
 
-    match = re.match('https://twitter.com/[a-zA-Z0-9_]*/status/([0-9]+)', message.content)
+    # Only need to match once, message.content.replace replaces all
+    match = re.search('https://twitter.com/[a-zA-Z0-9_]*/status/([0-9]+)', message.content)
     if not match:
         return
 
