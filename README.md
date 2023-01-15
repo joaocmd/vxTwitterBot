@@ -9,7 +9,7 @@ The config file is structured as follows:
 
 ```json
 {
-    "DISCORD_TOKEN": "<TOKEN_HERE>",
+    "DISCORD_TOKEN": "<DISCORD_TOKEN_HERE>",
     "TWITTER_BEARER_TOKEN": "<TWITTER_BEARER_TOKEN_HERE>",
     "PREAMBLE": "wrote:\n", // message starts with "@mention wrote:\n"
     "MATCH": "https://twitter.com",
