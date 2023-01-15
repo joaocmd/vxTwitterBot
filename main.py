@@ -17,7 +17,7 @@ bot = discord.Client(intents=intents)
 
 @bot.event
 async def on_message(message):
-    if message.author.bot:
+    if message.author.id == bot.user.id:
         return
 
     if MATCH in message.content:
