@@ -1,4 +1,3 @@
-from typing import List
 import datetime
 import discord
 import json
@@ -22,7 +21,7 @@ bot = discord.Client(intents=intents)
 
 twitter_api = pytwitter.Api(bearer_token=TWITTER_BEARER_TOKEN)
 
-def check_video_twitter_api(tweet_ids: List[str]):
+def check_video_twitter_api(tweet_ids: list[str]):
     for tweet_id in tweet_ids:
         tweet = twitter_api.get_tweet(tweet_id, expansions=["attachments.media_keys"], media_fields=["type"])
         if (tweet.includes and tweet.includes.media and
