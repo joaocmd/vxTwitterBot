@@ -1,8 +1,8 @@
 import datetime
 import discord
 import json
-import re
 import pytwitter
+import re
 
 with open('config.json') as f:
     config = json.load(f)
@@ -36,16 +36,17 @@ async def on_message(message: discord.Message):
         return
 
     match = re.match('https://twitter.com/[a-zA-Z0-9_]*/status/([0-9]+)', message.content)
-    if match:
-        tweet_id = match.group(1)
+    if not match:
+        return
 
+    tweet_id = match.group(1)
     if TWITTER_BEARER_TOKEN:
         has_video = check_video_twitter_api(tweet_id)
     else:
         has_video = check_video_no_twitter(message)
 
     print(datetime.datetime.now(), message.author, message.content)
-    if MATCH in message.content and has_video:
+    if has_video:
         if TAG:
             new_message = f'{message.author.mention} {PREAMBLE}{message.content.replace(MATCH, REPLACE)}'
         else:
@@ -53,5 +54,10 @@ async def on_message(message: discord.Message):
 
         await message.channel.send(new_message)
         await message.delete()
+
+if TWITTER_BEARER_TOKEN:
+    print(datetime.datetime.now(), 'Found twitter API bearer token, using twitter API to check for videos')
+else:
+    print(datetime.datetime.now(), 'Did not find a twitter API bearer token, using Discord embeds videos. This may fail sometimes.')
 
 bot.run(DISCORD_TOKEN)
