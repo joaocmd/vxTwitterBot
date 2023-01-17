@@ -29,6 +29,9 @@ def check_video_twitter_api(tweet_ids: List[str], depth=0):
             media_fields=["type"]
         )
 
+    if not tweets.includes: # does not include any tweet or media
+        return False
+
     if depth == 0 and tweets.includes.tweets: # only check first quote retweet
         if any(check_video_twitter_api([referenced_tweet.id], depth=1) for referenced_tweet in tweets.includes.tweets):
                 return True
