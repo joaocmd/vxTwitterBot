@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 import datetime
 import discord
 import json
@@ -22,7 +22,19 @@ bot = discord.Client(intents=intents)
 
 twitter_api = pytwitter.Api(bearer_token=TWITTER_BEARER_TOKEN)
 
-def check_video_twitter_api(tweet_ids: List[str], depth=0):
+def now() -> str:
+    return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+def check_video_twitter_api(tweet_ids: List[str], depth: Optional[int] = 0) -> bool:
+    """
+        Returns whether any tweet specified by `tweet_ids` includes an animated
+        GIF or a video. Returns False if the tweet includes any other media,
+        even if it is a quote retweet or a video/GIF.
+
+        Arguments:
+        tweet_ids --- a list containing the IDs of the tweets in a string format
+        depth --- current recursion depth, used to check for quote retweets
+    """
     tweets = twitter_api.get_tweets(
             tweet_ids[0],
             expansions=["attachments.media_keys", "referenced_tweets.id"],
@@ -42,13 +54,17 @@ def check_video_twitter_api(tweet_ids: List[str], depth=0):
 
     return False
 
-def check_video_discord_embed(message: discord.Message):
-    return (MATCH in message.content and
-            message.embeds and any(embed.video and embed.video.url for embed in message.embeds))
+def check_video_discord_embed(message: discord.Message) -> bool:
+    """
+        Returns whether a message contains an embedded video.
+
+        Arguments:
+        message --- the discord message object
+    """
+    return any(embed.video for embed in message.embeds)
 
 @bot.event
-async def on_message(message: discord.Message):
-    logging.info('TEST')
+async def on_message(message: discord.Message) -> None:
     if message.author.id == bot.user.id:
         return
 
@@ -62,7 +78,7 @@ async def on_message(message: discord.Message):
     else:
         has_video = check_video_discord_embed(message)
 
-    print(datetime.datetime.now(), message.author, message.content)
+    print(now(), message.author, message.content)
     if has_video:
         if TAG:
             new_message = f'{message.author.mention} {PREAMBLE}{message.content.replace(MATCH, REPLACE)}'
@@ -73,8 +89,8 @@ async def on_message(message: discord.Message):
         await message.delete()
 
 if TWITTER_BEARER_TOKEN:
-    print(datetime.datetime.now(), 'Found twitter API bearer token, using twitter API to check for videos')
+    print(now(), 'Found twitter API bearer token, using twitter API to check for videos')
 else:
-    print(datetime.datetime.now(), 'Did not find a twitter API bearer token, using Discord embeds videos. This may fail sometimes.')
+    print(now(), 'Did not find a twitter API bearer token, using Discord embeds videos. This may fail sometimes.')
 
 bot.run(DISCORD_TOKEN)
