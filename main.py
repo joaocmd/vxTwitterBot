@@ -54,13 +54,17 @@ def check_video_twitter_api(tweet_ids: List[str], depth: Optional[int] = 0) -> b
     return False
 
 def check_video_discord_embed(message: discord.Message) -> bool:
-    """
-        Returns whether a message contains an embedded video.
+    """Returns whether a Discord `message` contains an embedded video."""
 
-        Arguments:
-        message --- the discord message object
-    """
     return any(embed.video for embed in message.embeds)
+
+def make_message(message: discord.Message) -> str:
+    """Creates the message for the bot to send given a discord Message object."""
+
+    if TAG:
+        return f'{message.author.mention} {PREAMBLE}{message.content.replace(MATCH, REPLACE)}'
+    else:
+        return f'@{message.author.display_name} {PREAMBLE}{message.content.replace(MATCH, REPLACE)}'
 
 @bot.event
 async def on_message(message: discord.Message) -> None:
@@ -79,12 +83,7 @@ async def on_message(message: discord.Message) -> None:
 
     print(now(), message.author, message.content)
     if has_video:
-        if TAG:
-            new_message = f'{message.author.mention} {PREAMBLE}{message.content.replace(MATCH, REPLACE)}'
-        else:
-            new_message = f'@{message.author.display_name} {PREAMBLE}{message.content.replace(MATCH, REPLACE)}'
-
-        await message.channel.send(new_message)
+        await message.channel.send(make_message(message))
         await message.delete()
 
 if TWITTER_BEARER_TOKEN:
