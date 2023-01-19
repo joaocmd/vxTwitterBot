@@ -1,7 +1,7 @@
 {
     "DISCORD_TOKEN": "<TOKEN_HERE>",
     "TWITTER_BEARER_TOKEN": "",
-    "PREAMBLE": "did not use vxtwitter:\n",
+    "PREAMBLE": "wrote:\n",
     "MATCH": "https://twitter.com",
     "REPLACE": "https://vxtwitter.com",
     "TAG": false
