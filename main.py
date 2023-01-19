@@ -14,7 +14,6 @@ TWITTER_BEARER_TOKEN: str = config['TWITTER_BEARER_TOKEN']
 PREAMBLE: str = config['PREAMBLE']
 MATCH: str = config['MATCH']
 REPLACE: str = config['REPLACE']
-TAG: bool = config['TAG']
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -58,14 +57,6 @@ def check_video_discord_embed(message: discord.Message) -> bool:
 
     return any(embed.video for embed in message.embeds)
 
-def make_message(message: discord.Message) -> str:
-    """Creates the message for the bot to send given a discord Message object."""
-
-    if TAG:
-        return f'{message.author.mention} {PREAMBLE}{message.content.replace(MATCH, REPLACE)}'
-    else:
-        return f'@{message.author.display_name} {PREAMBLE}{message.content.replace(MATCH, REPLACE)}'
-
 @bot.event
 async def on_message(message: discord.Message) -> None:
     if message.author.id == bot.user.id:
@@ -83,7 +74,8 @@ async def on_message(message: discord.Message) -> None:
 
     print(now(), message.author, message.content)
     if has_video:
-        await message.channel.send(make_message(message))
+        new_message = f'{message.author.mention} {PREAMBLE}{message.content.replace(MATCH, REPLACE)}'
+        await message.channel.send(new_message, allowed_mentions=discord.AllowedMentions.none())
         await message.delete()
 
 if TWITTER_BEARER_TOKEN:

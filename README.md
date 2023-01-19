@@ -13,16 +13,13 @@ The config file is structured as follows:
     "TWITTER_BEARER_TOKEN": "<TWITTER_BEARER_TOKEN_HERE>",
     "PREAMBLE": "wrote:\n", // message starts with "@mention wrote:\n"
     "MATCH": "https://twitter.com",
-    "REPLACE": "https://vxtwitter.com",
-    "TAG": false // whether to tag the message author or not
+    "REPLACE": "https://vxtwitter.com"
 }
 ```
 
 The `TWITTER_BEARER_TOKEN` field can be left with an empty string.
 In that case, the bot uses the message embed to check if it contains a video.
 This method does not work for tweets with GIFs and does not always work because the embed might not load or might be loaded only after `on_message` is called.
-
-If `TAG` is false, the `@mention` text still appears but the message author is not tagged.
 
 ## Necessary bot permissions
 

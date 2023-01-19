@@ -3,6 +3,5 @@
     "TWITTER_BEARER_TOKEN": "",
     "PREAMBLE": "wrote:\n",
     "MATCH": "https://twitter.com",
-    "REPLACE": "https://vxtwitter.com",
-    "TAG": false
+    "REPLACE": "https://vxtwitter.com"
 }
