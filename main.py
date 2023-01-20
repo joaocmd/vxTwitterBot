@@ -1,9 +1,10 @@
 from typing import List, Optional
-import datetime
 import discord
 import json
 import pytwitter
 import re
+
+from logger import logger
 
 with open('config.json') as f:
     config = json.load(f)
@@ -20,9 +21,6 @@ intents.message_content = True
 bot = discord.Client(intents=intents)
 
 twitter_api = pytwitter.Api(bearer_token=TWITTER_BEARER_TOKEN)
-
-def now() -> str:
-    return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 def check_video_twitter_api(tweet_ids: List[str], depth: Optional[int] = 0) -> bool:
     """
@@ -72,15 +70,15 @@ async def on_message(message: discord.Message) -> None:
     else:
         has_video = check_video_discord_embed(message)
 
-    print(now(), message.author, message.content)
+    logger.info(f'{message.guild.name}: {message.author} {message.content}')
     if has_video:
         new_message = f'{message.author.mention} {PREAMBLE}{message.content.replace(MATCH, REPLACE)}'
         await message.channel.send(new_message, allowed_mentions=discord.AllowedMentions.none())
         await message.delete()
 
 if TWITTER_BEARER_TOKEN:
-    print(now(), 'Found twitter API bearer token, using twitter API to check for videos')
+    logger.info('Found twitter API bearer token, using twitter API to check for videos')
 else:
-    print(now(), 'Did not find a twitter API bearer token, using Discord embeds videos. This may fail sometimes.')
+    logger.info('Did not find a twitter API bearer token, using Discord embeds videos. This may fail sometimes.')
 
-bot.run(DISCORD_TOKEN)
+bot.run(DISCORD_TOKEN, log_handler=None)
