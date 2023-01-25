@@ -75,8 +75,7 @@ async def on_message(message: discord.Message) -> None:
         allowed_mentions = discord.AllowedMentions(
                 everyone=message.mention_everyone,
                 users=message.mentions,
-                roles=message.role_mentions,
-                replied_user=True,
+                roles=message.role_mentions
             )
         if message.reference and isinstance(message.reference.resolved, discord.Message):
             allowed_mentions.replied_user = message.author != message.reference.resolved.author
