@@ -72,10 +72,17 @@ async def on_message(message: discord.Message) -> None:
     logger.info(f'{message.guild.name}: {message.author} {message.content}')
     if has_video:
         new_message = f'{message.author.mention} {PREAMBLE}{message.content.replace(MATCH, REPLACE)}'
+        allowed_mentions = discord.AllowedMentions(
+                everyone=message.mention_everyone,
+                users=message.mentions,
+                roles=message.role_mentions,
+                replied_user=True,
+            )
         if message.reference and isinstance(message.reference.resolved, discord.Message):
-            await message.reference.resolved.reply(new_message, allowed_mentions=discord.AllowedMentions.none())
+            allowed_mentions.replied_user = message.author != message.reference.resolved.author
+            await message.reference.resolved.reply(new_message, allowed_mentions=allowed_mentions)
         else:
-            await message.channel.send(new_message, allowed_mentions=discord.AllowedMentions.none())
+            await message.channel.send(new_message, allowed_mentions=allowed_mentions)
 
         await message.delete()
 
